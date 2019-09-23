@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<meta charset="UTF-8">
 		<title>Ultimate Duidoku</title>
+		<meta charset="UTF-8">
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 		<link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel="stylesheet"> 
 		<link href="https://fonts.googleapis.com/css?family=Vollkorn+SC&display=swap" rel="stylesheet"> 
+		
+		<!-Stylesheet ->		
 		<style>
 			p {
 				font-family: 'Vollkorn SC', cursive;
@@ -81,9 +84,9 @@
 				margin: 3px 1px;
 				display: inline-block;
 				font-size: 30px;
-				width: 300px;
+				width: 220px;
 				height: 60px;
-				max-width: 300px;
+				max-width: 220px;
 				max-height: 60px;
 				font-family: 'Vollkorn SC', cursive;
 				font-size: 30px;
@@ -98,8 +101,11 @@
 				background-color: white;
 			}
 		</style>
+		<!- Script ->
 		<script>
 			/* Element Modification */
+
+			// shows the user value entry buttons
 			var show_popup = function(posx, posy) {
 				elements = document.getElementsByClassName("popup");
 				moves = valid_moves(y, x);
@@ -117,20 +123,30 @@
 				}
 			}
 
+			// undoes the grid grey out effect
 			var show_grid = function() {
 				elements = document.getElementsByClassName("button");
 				for (var i = 0; i < elements.length; i++) {
 					elements[i].style.color = "black";
 				}
-			}
 
+				document.getElementById("solve-button").style.color = "black";
+				document.getElementById("autoplay-button").style.color = "black";
+			}
+			
+			// greys out the grid and the solve & autoplay buttons
+			// the user shouldn't try to autoplay or solve while entering
 			var hide_grid = function() {
 				elements = document.getElementsByClassName("button");
 				for (var i = 0; i < elements.length; i++) {
 					elements[i].style.color = "lightgrey";
 				}
+
+				document.getElementById("solve-button").style.color = "lightgrey";
+				document.getElementById("autoplay-button").style.color = "lightgrey";
 			}
 
+			// hides the user entry buttons
 			var hide_popup = function() {
 				elements = document.getElementsByClassName("popup");
 				for (var i = 0; i < elements.length; i++) {
@@ -138,6 +154,7 @@
 				}
 			}
 
+			// move data from board[][] to the buttons
 			var copy_board_to_window = function() {
 				for (var i = 0; i < 9; i++) {
 					for (var j = 0; j < 9; j++) {
@@ -150,6 +167,7 @@
 				}
 			}
 
+			// move data from board_copy[][] to the buttons
 			var copy_board_copy_to_window = function() {
 				for (var i = 0; i < 9; i++) {
 					for (var j = 0; j < 9; j++) {
@@ -163,11 +181,12 @@
 			}
 
 			/* Board Code */
-			var alloc_arr = function(r, c) {
+			// alloc a new board
+			var alloc_board = function() {
 				var arr = []
-				for (var i = 0; i < r; i++) {
+				for (var i = 0; i < 9; i++) {
 					var arri = []
-					for (var j = 0; j < c; j++) {
+					for (var j = 0; j < 9; j++) {
 						arri.push(0)
 					}
 					arr.push(arri)
@@ -176,6 +195,9 @@
 				return arr;
 			}
 
+			// copy from board into the copy
+			// useful for solving, as it allows me to keep
+			// track of the original state
 			var copy_board = function() {
 				for (var i = 0; i < 9; i++) {
 					for (var j = 0; j < 9; j++) {
@@ -184,19 +206,24 @@
 				}
 			}
 
+			// is the move (row, col, value) valid?
 			var is_valid_move = function(r, c, v) {
+				// is value present?
 				if (board[r][c] != 0) {
 					return false;
     				}
 
+				// row check
 				for (var i = 0; i < 9; i++) {
 					if (board[r][i] == v) return false;
 				}
 
+				// col check
 				for (var i = 0; i < 9; i++) {
 					if (board[i][c] == v) return false;
 				}
 
+				// grid check
 				for (var i = Math.floor(r / 3) * 3; i < Math.floor(r / 3) * 3 + 3; i++) {
 					for (var j = Math.floor(c / 3) * 3; j < Math.floor(c / 3) * 3 + 3; j++) {
 						if (board[i][j] == v) return false;
@@ -206,6 +233,8 @@
 				return true;
 			}
 
+			// list of all valid moves in (row, col)
+			// used for figuring out which buttons to display
 			var valid_moves = function(r, c) {
 				moves = [];
 				for (var i = 1; i < 10; i++) {
@@ -216,6 +245,7 @@
 				return moves;				
 			}
 
+			// is move (row, col, value) valid, but operating on board_copy
 			var is_valid_copy_move = function(r, c, v) {
 				if (board_copy[r][c] != 0) {
 					console.log("filled!");
@@ -239,8 +269,13 @@
 				return true;
 			}
 
+			// the x index of the next valid cell
 			var nx = -1;
+			// the y index of the next valid cell
 			var ny = -1;
+
+			// returns if there is another empty cell to fill
+			// if so sets, nx and ny
 			var next_empty = function() {
 				for (var i = 0; i < 9; i++) {
 					for (var j = 0; j < 9; j++) {
@@ -255,6 +290,7 @@
 				return false;
 			}
 
+			// check recursivly if the board copy is solvable
 			var solveable_r = function() {
 				if (!next_empty()) {
 					return true;
@@ -279,6 +315,10 @@
 				return false;
 			}
 
+			// check if the board is solvable
+			// checks if there are any cells with no moves left first
+			// as that means the board is unsolvable, and solveable_r()
+			// can take an abnormally large amount of time on some inputs
 			var solveable = function() {
 				for (var i = 0; i < 9; i++) {
 					for (var j = 0; j < 9; j++) {
@@ -290,14 +330,21 @@
 				return solveable_r();
 			}
 
-			var board = alloc_arr(9,9);
-			var board_copy = alloc_arr(9,9);
+			// the board
+			var board = alloc_board();
+
+			// a copy of the board
+			// various solve() methods operate on this so as not to disturb
+			// the master copy of the board
+			var board_copy = alloc_board();
 			
 			/* UI Code */
 			var turn_number = 0;
-			var entering = false;
-			var x = -1;
-			var y = -1;
+			var entering = false; // is the user entering
+			var x = -1; // x of the button pressed
+			var y = -1; // y of the button pressed
+
+			// act on the fact that the user pressed the button at (a,b);
 			var disp = function(a,b) {
 				if (!entering && board[a][b] == 0) {
 					var dim = document.getElementById(a + "," + b).getBoundingClientRect();
@@ -309,6 +356,9 @@
 				}
  			}
 
+			// process the fact that the user selected the value v
+			// to put into (y, x) specified by the button they must
+			// have clicked on earlier
 			var process = function(v) {
 				board[y][x] = v;
 				turn_number++;
@@ -317,51 +367,118 @@
 				var victor_box = document.getElementById("victor");
 
 				if(!next_empty()) {
-					victor_box.innerHTML = "The game is a tie!"
+					// tie if no more available moves
+					victor_box.innerHTML = "The game is a tie!";
 				} else if (!solveable()) {
+					// someone might have won
 					if (turn_number % 2 == 0) {
 						victor_box.innerHTML = "Player 1 wins";
 					} else {
 						victor_box.innerHTML = "Player 2 wins";
 					}
 				} else {
+					// or not
 					entering = false;
 					show_grid();
 				}
+
+				// update board on the window
 				copy_board_to_window();
 				hide_popup();
 			}
 
+			// is the board currently "solved" due to a call to toggle_solve()?
 			var solved = false;
+
+			// toggle if the current solution calculated by solvable_r()
+			// should be displayed
 			var toggle_solve = function() {
+				// we don't want the user to be able to display the solution
+				// after having clicked on a field
 				if (!solved && !entering) {
 					copy_board();
 					if(solveable()) {
-						copy_board_copy_to_window();
+						copy_board_copy_to_window(); // show the solution in board_copy
 						solved = true;
 						entering = true;
 						hide_grid();
+
+						// we don't want to grey out the solve button
 						document.getElementById("solve-button").innerHTML = "Unsolve";
+						document.getElementById("solve-button").style.color = "black";
 					}
 				} else if (solved) {
+					// "Unsolve" the board
 					copy_board_to_window();
 					solved = false;
 					entering = false;
 					show_grid();
+
+					// update
 					document.getElementById("solve-button").innerHTML = "Solve";
 				}
 			}
+
+			// play the next move that the computer would in order to solve the game
+			var autoplay = function() {
+				if (!entering) {
+					entering = true;
+					copy_board();
+					if (next_empty()) {
+						var vx = nx;
+						var vy = ny;
+						if(solveable()) {
+							board[vy][vx] = board_copy[vy][vx];
+							copy_board_to_window();
+						}
+
+						copy_board();
+
+						// someone might have tied by calling autoplay with 1 valid move left
+						// as autoplay can only ever be called on solvable boards (1)
+						// we only need to check for ties
+						// (1) We know this because:
+						// The starting board is solvable
+						// autoplay() does the next valid move, leaving the board solvable
+						// if a user entered a move which leads to an unsolvable game,
+						// that will be caught in process() by solvable()
+						if (!next_empty()) {
+							document.getElementById("victor").innerHTML = "The game is a tie!";
+							hide_grid();
+							entering = true;
+						} else {
+							entering = false;
+						}
+					} else {
+						entering = false;
+					}
+				}
+			}
+
+			// oh hey, it's the init message
+			var init_message = function() {
+				console.log("Hey there! Happy to see you!");
+				console.log("Feel free to poke around! Remember that you can also find the source at https://github.com/khemritolya/ultimate-duidoku");
+				console.log("If you've got any questions or concerns, feel free to drop me a line!");
+				console.log("Email: lrh74[at]cornell[dot]edu");
+			}
+
+			window.onload = init_message;
 		</script>
 	</head>
+
 	<body>
+		<!- Spacer to to fix title bar covering rules ->
 		<br><br><br><br><br><br><br>
+		<!- Rules area ->
 		<div>
 			<h2>Rules</h2>
 			<p>1. Squares are valid as in Sudoku<br>2. Moves alternate from Player 1 to Player 2<br>3. If your move causes an unsolvable board, you lose<br>4. If the board is solved, it is a tie</p> 
+			<br>
+			<hr>
+			<br><br>
 		</div>
-		<br>
-		<hr>
-		<br><br>
+		<!- Generated using a python program. I would not want to write this by hand. ->
 		<div>
 			<button class="button" id="0,0" onclick="disp(0,0)">&nbsp;</button>
 			<button class="button" id="0,1" onclick="disp(0,1)">&nbsp;</button>
@@ -402,8 +519,8 @@
 			<button class="button" id="2,8" onclick="disp(2,8)">&nbsp;</button>
 			<p class = "horiz-space">&nbsp;&nbsp;</p>
 			<br>
-			</div>
-			<div>
+		</div>
+		<div>
 			<br>
 			<button class="button" id="3,0" onclick="disp(3,0)">&nbsp;</button>
 			<button class="button" id="3,1" onclick="disp(3,1)">&nbsp;</button>
@@ -444,8 +561,8 @@
 			<button class="button" id="5,8" onclick="disp(5,8)">&nbsp;</button>
 			<p class = "horiz-space">&nbsp;&nbsp;</p>
 			<br>
-			</div>
-			<div>
+		</div>
+		<div>
 			<br>
 			<button class="button" id="6,0" onclick="disp(6,0)">&nbsp;</button>
 			<button class="button" id="6,1" onclick="disp(6,1)">&nbsp;</button>
@@ -487,25 +604,36 @@
 			<p class = "horiz-space">&nbsp;&nbsp;</p>
 			<br>
 		</div>
-		<br>
-		</div>
+
+		<!- Victory area ->
 		<div>
+			<br>
 			<h2 id="victor"></h2>
+			<br>
 		</div>
+
+		<!- Helper Buttons ->
 		<div>
 			<button class="bottom" onclick="window.location.reload()">Restart</button>
 			<button class="bottom" id="solve-button" onclick="toggle_solve()">Solve</button>
+			<button class="bottom" id="autoplay-button" onclick="autoplay()">Play for Me</button>
 			<br><br><br>
 			<hr>
+		</div>
+
+		<!- Additional Information Section ->
 		<div>
 			<br><br>
 			<p><b>Additional Information:</b></p>
-			<p>Clicking solve will display the current board's solution,<br>but will not end the game!</p>
+			<p>Clicking "Solve" will display the current board's solution,<br>
+			but will not end the game! You can "Unsolve" it</p>
+			<p>"Play for Me" plays the next valid move<br>which leads to a solvable board</p>
 			<br>
 			<p>Concept: <a href="http://kaushikbasu.org/">Kaushik Basu</a><p>
 			<p>&nbsp;Author: <a href="https://github.com/khemritolya">Luis Hoderlein</a></p>
 		</div>
 		<br>
+		<!- The buttons that the user uses to enter input ->
 		<div>
 			<button class="popup" id="1" onclick="process(1)">1</button>
 			<button class="popup" id="2" onclick="process(2)">2</button>
@@ -517,6 +645,7 @@
 			<button class="popup" id="8" onclick="process(8)">8</button>
 			<button class="popup" id="9" onclick="process(9)">9</button>
 		</div>
+
 		<div id="top-bar">
 			<h1>Ultimate Duidoku</h1>
 			<hr>
