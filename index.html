@@ -7,7 +7,7 @@
 		<link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel="stylesheet"> 
 		<link href="https://fonts.googleapis.com/css?family=Vollkorn+SC&display=swap" rel="stylesheet"> 
 		
-		<!-Stylesheet ->		
+		<!-- Stylesheet -->		
 		<style>
 			p {
 				font-family: 'Vollkorn SC', cursive;
@@ -17,6 +17,7 @@
 			h1 {
 				font-family: 'Vollkorn SC', cursive;
 				font-size: 50px;
+				margin: 10px 0px;
 			}
 
 			h2 {
@@ -31,6 +32,7 @@
 			div {
 				align-content: center;
 				text-align: center;
+				min-width: 700px;
 			}
 			.button {
 				background-color: white;
@@ -101,7 +103,7 @@
 				background-color: white;
 			}
 		</style>
-		<!- Script ->
+		<!-- Script -->
 		<script>
 			/* Element Modification */
 
@@ -468,9 +470,9 @@
 	</head>
 
 	<body>
-		<!- Spacer to to fix title bar covering rules ->
-		<br><br><br><br><br><br><br>
-		<!- Rules area ->
+		<!-- Spacer to to fix title bar covering rules -->
+		<br><br><br><br><br>
+		<!-- Rules area -->
 		<div>
 			<h2>Rules</h2>
 			<p>1. Squares are valid as in Sudoku<br>2. Moves alternate from Player 1 to Player 2<br>3. If your move causes an unsolvable board, you lose<br>4. If the board is solved, it is a tie</p> 
@@ -478,7 +480,7 @@
 			<hr>
 			<br><br>
 		</div>
-		<!- Generated using a python program. I would not want to write this by hand. ->
+		<!-- Generated using a python program. I would not want to write this by hand. -->
 		<div>
 			<button class="button" id="0,0" onclick="disp(0,0)">&nbsp;</button>
 			<button class="button" id="0,1" onclick="disp(0,1)">&nbsp;</button>
@@ -605,14 +607,14 @@
 			<br>
 		</div>
 
-		<!- Victory area ->
+		<!-- Victory area -->
 		<div>
 			<br>
 			<h2 id="victor"></h2>
 			<br>
 		</div>
 
-		<!- Helper Buttons ->
+		<!-- Helper Buttons -->
 		<div>
 			<button class="bottom" onclick="window.location.reload()">Restart</button>
 			<button class="bottom" id="solve-button" onclick="toggle_solve()">Solve</button>
@@ -621,7 +623,7 @@
 			<hr>
 		</div>
 
-		<!- Additional Information Section ->
+		<!-- Additional Information Section -->
 		<div>
 			<br><br>
 			<p><b>Additional Information:</b></p>
@@ -633,7 +635,7 @@
 			<p>&nbsp;Author: <a href="https://github.com/khemritolya">Luis Hoderlein</a></p>
 		</div>
 		<br>
-		<!- The buttons that the user uses to enter input ->
+		<!-- The buttons that the user uses to enter input -->
 		<div>
 			<button class="popup" id="1" onclick="process(1)">1</button>
 			<button class="popup" id="2" onclick="process(2)">2</button>
