@@ -176,6 +176,9 @@
 							document.getElementById(i + "," + j).innerHTML = "&nbsp;";
 						} else {
 							document.getElementById(i + "," + j).innerHTML = board_copy[i][j];
+							if (board_copy[i][j] == board[i][j]) {
+								document.getElementById(i + "," + j).style.color = "black";
+							}
 						}
 					}
 				}
@@ -399,10 +402,11 @@
 				if (!solved && !entering) {
 					copy_board();
 					if(solveable()) {
-						copy_board_copy_to_window(); // show the solution in board_copy
 						solved = true;
 						entering = true;
 						hide_grid();
+
+						copy_board_copy_to_window(); // show the solution in board_copy
 
 						// we don't want to grey out the solve button
 						document.getElementById("solve-button").innerHTML = "Unsolve";
@@ -603,14 +607,11 @@
 			<button class="button" id="8,7" onclick="disp(8,7)">&nbsp;</button>
 			<button class="button" id="8,8" onclick="disp(8,8)">&nbsp;</button>
 			<p class = "horiz-space">&nbsp;&nbsp;</p>
-			<br>
 		</div>
 
 		<!-- Victory area -->
 		<div>
-			<br>
 			<h2 id="victor"></h2>
-			<br>
 		</div>
 
 		<!-- Helper Buttons -->
